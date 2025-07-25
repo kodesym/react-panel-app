@@ -2,10 +2,11 @@
 import { useState } from 'react';
 import { PanelSectionLayout } from '@/components/layout/PanelSectionLayout';
 import { SearchResultContent } from './views/SearchResultContent';
-import { usePanelInstance } from '@/contexts/PanelInstanceContext';
+import { usePanel } from '@/hooks/usePanel';
+import { PanelNavHeader } from '../common/PanelNavHeader';
 
 const SearchResultPanel = () => {
-  const { panelId } = usePanelInstance();
+  const { id } = usePanel();
   const [filters] = useState({
     status: 'active',
     keyword: '',
@@ -13,7 +14,8 @@ const SearchResultPanel = () => {
 
   return (
     <PanelSectionLayout
-      id={panelId} // Unique ID for this panel
+      id={id}
+      headerNav={<PanelNavHeader />}
       content={<SearchResultContent filters={filters} />}
     />
   );

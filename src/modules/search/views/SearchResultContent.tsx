@@ -1,5 +1,5 @@
 import { usePanel } from "@/hooks/usePanel";
-import { AppPanels } from "@/modules/common";
+import { AppPanels } from "@/modules";
 import { Button } from "@mui/material";
 
 interface Props {

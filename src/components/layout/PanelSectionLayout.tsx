@@ -1,5 +1,4 @@
 import { styled } from "@mui/material";
-import { ContentSection, FooterActionSection, FooterSection, HeaderNavSection, HeaderSection } from "./PanelSections";
 
 interface PanelSectionLayoutProps {
   id: string;
@@ -10,8 +9,11 @@ interface PanelSectionLayoutProps {
   footerAction?: React.ReactNode;
 }
 
-export interface PanelSectionProps {
+interface PanelSectionProps {
   id: string;
+  className?: string;
+  sx?: React.CSSProperties;
+  children?: React.ReactNode;
 }
 
 const Root = styled('div', { name: 'PanelSectionLayout' })(({ theme }) => ({
@@ -23,7 +25,8 @@ const Root = styled('div', { name: 'PanelSectionLayout' })(({ theme }) => ({
   color: theme.palette.text.primary,
   '& .panel-shell-content': {},
   '& .header-nav': {
-    padding: theme.spacing(1),
+    minHeight: '64px',
+    padding: theme.spacing(2),
     borderBottom: `1px solid ${theme.palette.background.border}`,
   },
   '& .header': {
@@ -47,6 +50,26 @@ const Root = styled('div', { name: 'PanelSectionLayout' })(({ theme }) => ({
   },
 }));
 
+const sectionName = 'PanelSection';
+const sectionType = 'section';
+
+const HeaderNav = styled(sectionType, { name: sectionName, slot: 'headerNav' })({});
+const Header = styled(sectionType, { name: sectionName, slot: 'header' })({});
+const Content = styled(sectionType, { name: sectionName, slot: 'content' })({});
+const Footer = styled(sectionType, { name: sectionName, slot: 'footer' })({});
+const FooterAction = styled(sectionType, { name: sectionName, slot: 'footerAction' })({});
+
+const Section = (Comp: React.ComponentType<PanelSectionProps>): React.FC<PanelSectionProps> => (({id, children, className, sx }) => (
+  <Comp id={id} className={className} sx={sx}>
+    {children}
+  </Comp>
+));
+
+const HeaderNavSection = Section(HeaderNav);
+const HeaderSection = Section(Header);
+const ContentSection = Section(Content);
+const FooterSection = Section(Footer);
+const FooterActionSection = Section(FooterAction);
 
 export const PanelSectionLayout = ({
   id,

@@ -1,17 +1,18 @@
-import type { PanelAnchor, PanelRegistry } from '@/types/panels';
+import type { PanelRegistry } from '@/types/panels';
 import { Box, Typography } from '@mui/material';
-import { AppPanels } from '../common';
+import { AppPanels } from '..';
 
-const id = AppPanels.settings; // Unique ID for this panel`
+const name = AppPanels.settings; // Unique ID for this panel`
 
 export const settingsPanels : PanelRegistry = {
-  [id]: {
-    id,
-    anchor: 'right' as PanelAnchor,
+  [name]: {
+    name,
+    anchor: 'right',
     width: 400,
     label: 'Settings',
     icon: <Typography variant="h6">⚙️</Typography>,
-    menuPosition: 'bottom',
+    menuAnchor: 'right',
+    menuPosition: 'end',
     children: <Box p={2} sx={{backgroundColor: 'background.default', height: '100%'}}><Typography variant="h6">Settings</Typography></Box>,
   },
 };

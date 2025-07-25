@@ -1,41 +1,43 @@
 // src/hooks/usePanel.ts
 import { useMemo } from 'react';
-import { usePanelContext } from '@/contexts/PanelContext';
-import type { PanelMemory } from '@/types/panels';
 import { usePanelInstance } from '@/contexts/PanelInstanceContext';
+import { usePanelStore } from './usePanelStore';
+import type { PanelEntry } from '@/types/panels';
 
-export const usePanel = (id?: string) => {
+  export const usePanel = (id?: string) => {
 
-  const { panelId } = usePanelInstance();
-  if (!id && !panelId) {
-    throw new Error('No Panel ID provided. Use within a PanelInstanceProvider.');
-  }
+    if (!id) {
+      const { panelId } = usePanelInstance();
+      if (!panelId) {
+        throw new Error('No Panel ID provided. Use within a PanelInstanceProvider.');
+      }
+      id = panelId;
+    }
 
-  id = id ?? panelId;
+    const {
+      openPanels,
+      panelEntryMap,
+      openPanel,
+      closePanel,
+      togglePanel,
+      updatePanel,
+    } = usePanelStore();
 
-  const {
-    openPanels,
-    panelMemoryMap,
-    openPanel,
-    closePanel,
-    togglePanel,
-    updatePanel,
-    setOpenPanels,
-  } = usePanelContext();
+    const isOpenPanel = openPanels.includes(id);
+    const panelEntry = panelEntryMap[id] ?? {};
 
-  const isOpenPanel = openPanels.includes(id);
-  const panelMemory = panelMemoryMap[id] ?? {};
-
-  return useMemo(
-    () => ({
-      id,
-      isOpenPanel,
-      openPanel: (overrides = {}) => openPanel(id, overrides),
-      closePanel: () => closePanel(id),
-      togglePanel: () => togglePanel(id),
-      updatePanel: (updates: Partial<PanelMemory>) => updatePanel(id, updates),
-      panelMemory
-    }),
-    [id, isOpenPanel, panelMemory, openPanel, closePanel, togglePanel, updatePanel, setOpenPanels]
-  );
-};
+    return useMemo(
+      () => ({
+        id,
+        isOpenPanel,
+        openPanel: (overrides = {}) => openPanel(id, overrides),
+        closePanel: () => closePanel(id),
+        togglePanel: () => togglePanel(id),
+        updatePanel: (updates: Partial<PanelEntry>) => updatePanel(id, updates),
+        panelEntry,
+        openPanels,
+        panelEntryMap,
+      }),
+      [id, isOpenPanel, openPanels, panelEntry, openPanel, closePanel, togglePanel, updatePanel, panelEntryMap]
+    );
+  };

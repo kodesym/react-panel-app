@@ -5,87 +5,72 @@ import {
   styled,
   type BoxProps
 } from '@mui/material';
-import { usePanelContext } from '@contexts/PanelContext';
 import { panelRegistry } from '@/modules/panelRegistry';
-import { SidebarWidth } from '@/utils/panelUtils';
+import { isLeftRight, oppositeSide, SidebarWidth } from '@/utils/panelUtils';
 import SidebarMenuItem from './SidebarMenuItem';
-import type { PanelAnchor, PanelMenuItem, PanelRegistryEntry } from '@/types/panels';
+import type { Anchor, PanelMenuItem, PanelRegistryEntry } from '@/types/panels';
+import { usePanelStore } from '@/hooks/usePanelStore';
+import { capitalizeFirstLetter, resolveValue } from '@/utils/common';
 
 interface SidebarProps extends BoxProps {
-  anchor: PanelAnchor;
+  anchor: Anchor;
 }
 
-const Root = styled(Box, { name: 'Sidebar' })<SidebarProps>(({ theme, anchor }) => ({
-  width: SidebarWidth,
-  height: '100vh',
-  position: 'sticky',
-  top: 0,
+function isMenuEnd(anchor: Anchor) {
+  return ['bottom', 'right'].includes(anchor);
+}
+
+const Root = styled(Box, { 
+  name: 'Sidebar', 
+  shouldForwardProp: (prop: string) => !['anchor'].includes(prop) 
+})<SidebarProps>(({ theme, anchor }) => ({
+  width: isLeftRight(anchor) ? `${SidebarWidth}px` : '100dvw',
+  height: isLeftRight(anchor) ? '100dvh' : `${SidebarWidth}px`,
+  position: 'fixed',
   backgroundColor: theme.palette.background.paper,
-  borderRight: '1px solid #ddd',
-  zIndex: 1200,
+  [`border${capitalizeFirstLetter(oppositeSide(anchor))}`]: '1px solid #ddd',
+  zIndex: 2500,
   display: 'flex',
-  flexDirection: 'column',
+  flexDirection: isLeftRight(anchor) ? 'column' : 'row',
+  [anchor]: 0,
 }));
 
-const TopMenus = styled('div', {name: 'Sidebar', slot: 'top' })({
-  flexBasis: '25%', 
-  display: 'flex', 
-  flexDirection: 'column', 
-  justifyContent: 'flex-start', 
-  overflowY: 'auto'
-}); 
-
-const CenterMenus = styled('div', {name: 'Sidebar', slot: 'center' })({
-  flexBasis: '50%', 
-  display: 'flex', 
-  flexDirection: 'column', 
-  justifyContent: 'flex-start', 
-  overflowY: 'auto'
-}); 
-
-const BottomMenus = styled('div', {name: 'Sidebar', slot: 'bottom' })({
-  flexBasis: '25%',
-  display: 'flex', 
-  flexDirection: 'column-reverse', 
-  justifyContent: 'flex-start', 
-  overflowY: 'auto'
-}); 
+const createMenus = (slot: string) => 
+  styled('div', {
+    name: 'Sidebar', 
+    slot, 
+    shouldForwardProp: (prop: string) => !['anchor'].includes(prop) 
+  })<SidebarProps>(({ theme, anchor }) => ({
+    flexBasis: slot === 'middle' ? '50%' : '25%', 
+    display: 'flex', 
+    flexDirection: isLeftRight(anchor) ? 'column' : 'row', 
+    justifyContent: isMenuEnd(anchor) ? 'flex-end' : 'flex-start',
+    overflow: 'auto'
+}));
 
 function getMenuProps(entry: PanelRegistryEntry): PanelMenuItem {
-  const { id, icon, label, menuPosition, onClick, isHidden, isDisabled } = entry;
-  return { id, icon, label, menuPosition, onClick, isHidden, isDisabled };
+  const { name, icon, label, menuPosition, onClick, isHidden, isDisabled } = entry;
+  return { name, icon, label, menuPosition, onClick, isHidden, isDisabled };
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ anchor }) => {
-  const { togglePanel } = usePanelContext();
+  const { togglePanel } = usePanelStore();
 
-  const menuItems = Object.values(panelRegistry).filter(p => !p.parentId && !p.isHidden && p.anchor === anchor); 
+  const menuItems = Object.values(panelRegistry).filter(p => !p.parentName && !resolveValue(p.isHidden) && p.menuAnchor === anchor); 
 
   return (
     <Root anchor={anchor}>
-      <TopMenus>
-        <List disablePadding>
-          {menuItems.filter((item) => item.menuPosition === 'top').map((panel) => (
-            <SidebarMenuItem key={panel.id} {...getMenuProps(panel)} onClick={getMenuProps(panel).onClick ?? (() => togglePanel(panel.id))} />
-          ))}
-        </List>
-      </TopMenus>
 
-      <CenterMenus>
-        <List disablePadding>
-          {menuItems.filter((item) => item.menuPosition === 'center').map((panel) => (
-            <SidebarMenuItem key={panel.id} {...getMenuProps(panel)} onClick={getMenuProps(panel).onClick ?? (() => togglePanel(panel.id))} />
-          ))}
-        </List>
-      </CenterMenus>
-
-      <BottomMenus>
-        <List disablePadding>
-          {menuItems.filter((item) => item.menuPosition === 'bottom').map((panel) => (
-            <SidebarMenuItem key={panel.id} {...getMenuProps(panel)} onClick={getMenuProps(panel).onClick ?? (() => togglePanel(panel.id))} />
-          ))}
-        </List>
-      </BottomMenus>
+      {['start', 'middle', 'end'].map((position) => {
+        const Menus = createMenus(position);
+        return <Menus key={position} anchor={anchor}>
+          <List disablePadding>
+            {menuItems.filter((item) => item.menuPosition === position).map((panel) => (
+              <SidebarMenuItem key={panel.name} {...getMenuProps(panel)} onClick={getMenuProps(panel).onClick ?? (() => togglePanel(panel.name))} />
+            ))}
+          </List>
+        </Menus>
+      })}
 
     </Root>
   );

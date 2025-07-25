@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
 import ReactDOM from 'react-dom/client';
 import { CssBaseline, ThemeProvider } from '@mui/material';
-import { PanelProvider } from '@contexts/PanelContext';
 import { ThemeModeProvider, useThemeMode } from '@contexts/ThemeContext';
 import theme from '@styles/theme';
 import App from './App';
@@ -12,12 +11,7 @@ const ThemedApp = () => {
   return (
     <ThemeProvider theme={muiTheme}>
       <CssBaseline />
-      {/* <BrowserRouter> */}
-        <PanelProvider>
-          <App />
-          <div id="panel-root" /> {/* ✅ inside context */}
-        </PanelProvider>
-      {/* </BrowserRouter> */}
+      <App />
     </ThemeProvider>
   );
 };

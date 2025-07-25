@@ -1,73 +1,86 @@
-export type PanelAnchor = 'left' | 'right' | 'top' | 'bottom';
+import type { GetterFn, MaybeFunction, SetterFn } from "./common";
+import type { AnyAtom, AtomScopedStore } from './atom';
 
-export type VerticalPosition = 'top' | 'center' | 'bottom';
+export type Anchor = 'top' | 'bottom' | 'left' | 'right';
 
-export interface PanelState {
-  id: string;
-  anchor: PanelAnchor;
-  parentId?: string; // optional parent panel ID for nested panels
+export type MenuPosition = 'start' | 'middle' | 'end';
+
+export interface PanelModel {
+  name: string;
+  anchor: Anchor;
+  parentName?: string; // optional parent panel name for nested panels
   width: number;
+  isMulti?: boolean; // multi instance panel
 }
 
 export interface PanelMenuItem {
-  id: string;
+  name: string;
   label?: string;
   icon?: React.ReactNode;
-  menuPosition?: VerticalPosition; // position for menu item
+  menuAnchor?: Anchor;
+  menuPosition?: MenuPosition; // position for menu item
   onClick?: () => void;
-  isDisabled?: boolean; // for disabling menu item
-  isHidden?: boolean; // for conditional rendering
+  isDisabled?: MaybeFunction<boolean>; // for disabling menu item
+  isHidden?: MaybeFunction<boolean>; // for conditional rendering
 }
 
-export interface PanelMemory extends PanelState {
+export interface PanelEntry extends PanelModel {
+  id: string;
+  name: string;
+  parentId?: string;
+  props?: Record<string, any>;
+  store?: ViewState;
+}
+
+export interface PanelRegistryEntry extends PanelModel, PanelMenuItem {
+  children?: ReactNode;
   props?: Record<string, any>;
 }
 
-export interface PanelRegistryEntry extends PanelState, PanelMenuItem {
-  children?: ReactNode;
-}
-
-export type PanelMemoryMap = Record<string, PanelMemory>;
+export type PanelEntryMap = Record<string, PanelEntry>;
 export type PanelRegistry = Record<string, PanelRegistryEntry>;
-
-export interface PanelStoreOptions {
-  onChange?: (state: PanelStoreState) => void;
-}
 
 export interface PanelStoreState {
   openPanels: string[];
-  panelMemoryMap: PanelMemoryMap;
-  panelRegistry: PanelRegistry;
+  panelEntryMap: PanelEntryMap;
 }
 
-export type PanelHistoryEntry = {
-  openPanels: string[];
-  panelMemoryMap: PanelMemoryMap;
-};
-
-export interface PanelHistoryManagement {
-  // History management
+export interface PanelHistoryManager {
   canGoBack: boolean;
   canGoForward: boolean;
-  goBack: () => PanelHistoryEntry | null;
-  goForward: () => PanelHistoryEntry | null;
-  pushHistory?: () => PanelHistoryEntry | null;
-  getBreadcrumbs: () => PanelMemory[];
+  goBack: () => PanelStoreState | null;
+  goForward: () => PanelStoreState | null;
+  // getBreadcrumbs: () => PanelEntry[];
 }
 
-export interface PanelStore extends PanelStoreState, PanelHistoryManagement {
-  openPanel: (id: string, overrides?: Partial<PanelMemory>) => void;
+export interface PanelStore extends PanelStoreState, PanelHistoryManager {
+  openPanel: (name: string, overrides?: Partial<PanelEntry>) => void;
   closePanel: (id: string) => void;
-  togglePanel: (id: string) => void;
-  updatePanel: (id: string, updates: Partial<PanelMemory>) => void;
-  setOpenPanels: (ids: string[]) => void;
-  setPanelMemoryMap?: (newMemoryMap: PanelMemoryMap) => void;
+  togglePanel: (name: string) => void;
+  updatePanel: (id: string, updates: Partial<PanelEntry>) => void;
+  setOpenPanels: (names: string[]) => void;
   reset: () => void;
 }
 
 export interface PanelSectionProps {
   id: string;
+  children?: React.ReactNode;
   className?: string;
   sx?: React.CSSProperties;
-  children?: React.ReactNode;
+}
+
+export interface ViewStateConfig {
+  fields: Record<string, any>,
+  actions?: Record<string, (get: GetterFn, set: SetterFn) => void>,
+}
+
+export interface ViewState {
+  atoms: Record<string, AnyAtom>,
+  store?: AtomScopedStore,
+  get: GetterFn,
+  set: SetterFn
+}
+
+export interface PanelStateConfig {
+  [name: string]: ViewStateConfig
 }

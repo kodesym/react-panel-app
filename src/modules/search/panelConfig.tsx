@@ -1,23 +1,24 @@
-import type { PanelAnchor, PanelRegistry } from '@/types/panels';
+import type { PanelRegistry } from '@/types/panels';
 import SearchIcon from '@mui/icons-material/Search';
 import { LazyPanel } from '@/components/panels/LazyPanel';
-import { AppPanels } from '../common';
+import { AppPanels } from '..';
 
 export const searchPanels : PanelRegistry = {
   [AppPanels.search]: {
-    id: AppPanels.search,
-    anchor: 'left' as PanelAnchor,
+    name: AppPanels.search,
+    anchor: 'left',
     width: 400,
     label: 'Search',
     icon: <SearchIcon />,
-    menuPosition: 'center',
-    children: <LazyPanel loader={() => import('@/modules/search/SearchPanel')} />
+    menuAnchor: 'left',
+    menuPosition: 'middle',
+    children: <LazyPanel loader={() => import('@/modules/search/SearchPanel')} />,
   },
   [AppPanels.searchResults]: {
-    id: AppPanels.searchResults,
-    anchor: 'left' as PanelAnchor,
+    name: AppPanels.searchResults,
+    anchor: 'left',
     width: 400,
-    parentId: AppPanels.search, // indicates this is a nested panel
+    parentName: AppPanels.search, // indicates this is a nested panel
     children: <LazyPanel loader={() => import('@/modules/search/SearchResultPanel')} />,
   },
 };
