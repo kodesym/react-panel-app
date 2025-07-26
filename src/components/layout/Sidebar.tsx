@@ -5,12 +5,12 @@ import {
   styled,
   type BoxProps
 } from '@mui/material';
-import { panelRegistry } from '@/modules/panelRegistry';
+import { panelRegistry } from '@/panels/panelRegistry';
 import { isLeftRight, oppositeSide, SidebarWidth } from '@/utils/panelUtils';
 import SidebarMenuItem from './SidebarMenuItem';
 import type { Anchor, PanelMenuItem, PanelRegistryEntry } from '@/types/panels';
 import { usePanelStore } from '@/hooks/usePanelStore';
-import { capitalizeFirstLetter, resolveValue } from '@/utils/common';
+import { capitalize0, resolveValue } from '@/utils/common';
 
 interface SidebarProps extends BoxProps {
   anchor: Anchor;
@@ -28,7 +28,7 @@ const Root = styled(Box, {
   height: isLeftRight(anchor) ? '100dvh' : `${SidebarWidth}px`,
   position: 'fixed',
   backgroundColor: theme.palette.background.paper,
-  [`border${capitalizeFirstLetter(oppositeSide(anchor))}`]: '1px solid #ddd',
+  [`border${capitalize0(oppositeSide(anchor))})`]: '1px solid #ddd',
   zIndex: 2500,
   display: 'flex',
   flexDirection: isLeftRight(anchor) ? 'column' : 'row',
@@ -49,8 +49,8 @@ const createMenus = (slot: string) =>
 }));
 
 function getMenuProps(entry: PanelRegistryEntry): PanelMenuItem {
-  const { name, icon, label, menuPosition, onClick, isHidden, isDisabled } = entry;
-  return { name, icon, label, menuPosition, onClick, isHidden, isDisabled };
+  const { name, icon, label, menuAnchor, menuPosition, onClick, isHidden, isDisabled } = entry;
+  return { name, icon, label, menuAnchor, menuPosition, onClick, isHidden, isDisabled };
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ anchor }) => {
@@ -65,9 +65,10 @@ const Sidebar: React.FC<SidebarProps> = ({ anchor }) => {
         const Menus = createMenus(position);
         return <Menus key={position} anchor={anchor}>
           <List disablePadding>
-            {menuItems.filter((item) => item.menuPosition === position).map((panel) => (
-              <SidebarMenuItem key={panel.name} {...getMenuProps(panel)} onClick={getMenuProps(panel).onClick ?? (() => togglePanel(panel.name))} />
-            ))}
+            {menuItems.filter((item) => item.menuPosition === position).map((panel) => {
+              const { onClick, ...menuProps } = getMenuProps(panel);
+              return (<SidebarMenuItem key={panel.name} {...menuProps} onClick={onClick ?? (() => togglePanel(panel.name))} />
+            )})}
           </List>
         </Menus>
       })}

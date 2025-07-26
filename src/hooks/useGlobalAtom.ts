@@ -1,7 +1,6 @@
-import { getDefaultStore, type Atom, type WritableAtom } from 'jotai';
 import { useCallback, useSyncExternalStore } from 'react';
-
-const globalStore = getDefaultStore();
+import type { Atom, WritableAtom } from 'jotai';
+import { globalStore } from '@/store/globalStore';
 
 export function useGlobalAtomValue<Value>(atom: Atom<Value>): Value {
   return useSyncExternalStore(

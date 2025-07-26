@@ -6,7 +6,7 @@ import { PanelInstanceProvider } from '@/contexts/PanelInstanceContext';
 import { styled, useTheme } from '@mui/material/styles';
 import { usePanel } from '@/hooks/usePanel';
 import { isLeftRight, oppositeSide } from '@/utils/panelUtils';
-import { capitalizeFirstLetter } from '@/utils/common';
+import { camelCase } from '@/utils/common';
 import { Provider as StoreProvider } from 'jotai';
 
 const Root = styled(motion.div, { name: 'PanelShell' })({});
@@ -98,7 +98,7 @@ const PanelShell = ({
           ...(!isLeftRight(anchor) && {
             height: width,
           }),
-          [`border${capitalizeFirstLetter(oppositeSide(anchor))}`]: '1px solid rgba(0, 0, 0, 0.1)',
+          [camelCase(`border${oppositeSide(anchor)}`)]: '1px solid rgba(0, 0, 0, 0.1)',
         }}
         onAnimationStart={() => setExiting(true)}
         onAnimationComplete={() => setExiting(false)}

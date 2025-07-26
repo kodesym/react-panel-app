@@ -6,10 +6,10 @@ import type {
   PanelEntryMap,
   PanelStoreState,
 } from '@/types/panels';
-import { panelRegistry } from '@/modules/panelRegistry';
+import { panelRegistry } from '@/panels/panelRegistry';
 import { historyIndexAtom, historyStackAtom, openPanelsAtom, panelEntryMapAtom } from './atoms';
 import { createViewState } from '../viewStateFactory';
-import { panelStateConfig } from '@/modules/panelStateConfig';
+import { panelStateConfig } from '@/panels/panelStateConfig';
 
 function panelRegistryEntry(name: string): PanelEntry {
   const panelRegistryEntry = panelRegistry[name];
@@ -29,6 +29,7 @@ function updatePanelEntryMap(
   if (!panelEntry?.store) {
     store = createViewState(panelStateConfig[name])
   }
+
   return {
     ...panelEntryMap,
     [id]: {
@@ -58,6 +59,7 @@ function pushToHistory(get: Getter, set: Setter) {
     set(historyStackAtom, [...prunedStack, newHistory]);
     set(historyIndexAtom, prunedStack.length);
   }
+  $log.info(`stack: ${index} - ${get(historyIndexAtom)}`, get(historyStackAtom))
 }
 
 export const openPanelAtom = atom(null, (get, set, name: string, overrides: Partial<PanelEntry> = {}) => {

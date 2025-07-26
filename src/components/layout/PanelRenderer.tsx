@@ -3,7 +3,7 @@ import PanelShell from '@components/panels/PanelShell';
 import { AnimatePresence } from 'framer-motion';
 import { useAtom } from 'jotai';
 import { openPanelsAtom, panelEntryMapAtom } from '@/store/panels/atoms';
-import { panelRegistry } from '@/modules/panelRegistry';
+import { panelRegistry } from '@/panels/panelRegistry';
 
 const PanelRenderer = () => {
   const [openPanels] = useAtom(openPanelsAtom);

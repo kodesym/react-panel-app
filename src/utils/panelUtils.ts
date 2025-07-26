@@ -1,4 +1,4 @@
-import { panelRegistry } from "@/modules/panelRegistry";
+import { panelRegistry } from "@/panels/panelRegistry";
 import type { Anchor } from "@/types/panels";
 
 export const SidebarWidth = 50;
@@ -14,6 +14,20 @@ export function oppositeSide(anchor: Anchor) {
     case 'bottom': return 'top';
     default: return 'right';
   }
+}
+
+export const panelIdSeperator = '.';
+
+export function compositePanelId(id:string, name: string) {
+  if (id === name) return id;
+  return `${name}${panelIdSeperator}${id}`;
+}
+
+export function getPanelIdName(panelId: string) {
+  const parts = panelId.split(panelIdSeperator);
+  if (parts.length <= 1) return parts;
+  if (parts.length > 2) throw new Error(`Invalid panelId: ${panelId}`);
+  return { id: parts[1], name: parts[0] };
 }
 
 export function uniquePanelList() {

@@ -12,7 +12,7 @@
           "@components/*": ["./src/components/*"],
           "@contexts/*": ["./src/contexts/*"],
           "@hooks/*": ["./src/hooks/*"],
-          "@modules/*": ["./src/modules/*"],
+          "@panels/*": ["./src/panels/*"],
           "@pages/*": ["./src/pages/*"],
           "@store/*": ["./src/store/*"],
           "@styles/*": ["./src/styles/*"],
