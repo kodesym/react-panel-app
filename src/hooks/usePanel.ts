@@ -16,7 +16,7 @@ import {
   selectCanGoBack,
   selectCanGoForward,
 } from '@features/panels/panelSlice';
-import { panelRegistry } from '@/features/panelRegistry';
+import { defaultPanelEntry } from '@/utils/panelUtils';
 
   export const usePanel = (id?: string) => {
     const dispatch = useDispatch();
@@ -33,10 +33,8 @@ import { panelRegistry } from '@/features/panelRegistry';
     const canGoBack = useSelector(selectCanGoBack);
     const canGoForward = useSelector(selectCanGoForward);
     const isOpenPanel = openPanels.includes(id);
-    const panelEntry = panelEntryMap[id] ?? panelRegistry[id] ? { ...panelRegistry[id] } : {} as PanelEntry;
+    const panelEntry = panelEntryMap[id] ?? defaultPanelEntry(id);
     const request = { id, name: panelEntry.name };
-
-    $log.debug('usePanel', id, panelEntry)
 
     return useMemo(
       () => ({

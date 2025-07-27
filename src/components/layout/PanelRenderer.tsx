@@ -4,6 +4,7 @@ import { AnimatePresence } from 'framer-motion';
 import { panelRegistry } from '@features/panelRegistry';
 import { useSelector } from 'react-redux';
 import { selectOpenPanels, selectPanelEntryMap } from '@features/panels/panelSlice';
+import { LazyPanel } from '../panels/LazyPanel';
 
 const PanelRenderer = () => {
   const openPanels = useSelector(selectOpenPanels);
@@ -20,9 +21,10 @@ const PanelRenderer = () => {
       {Array.from(mountedPanels).map((id) => {
         const panelEntry = panelEntryMap[id];
         if (!panelEntry) return null;
-        const { children } = panelRegistry[panelEntry.name];
+        const { name } = panelEntry;
+        const { children } = panelRegistry[name];
         if (!children) return null;
-        return <PanelShell key={id} {...panelEntry} children={children} />;
+        return <PanelShell key={id} {...panelEntry}>{children}</PanelShell>;
       })}
     </ AnimatePresence>
   );

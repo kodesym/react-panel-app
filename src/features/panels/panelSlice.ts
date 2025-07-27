@@ -1,15 +1,9 @@
-import type { RootState } from "@/store/store";
+import type { RootState } from "@store/store";
 import type { PanelEntry, PanelRequest, PanelStoreState, PanelStore } from "@/types/panels";
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { panelRegistry } from "../panelRegistry";
 import { nanoid } from "nanoid";
-
-function extractPanelEntry(name: string): PanelEntry {
-  const panelRegistryEntry = panelRegistry[name];
-  if (!panelRegistryEntry) return {} as PanelEntry;
-  const { anchor, isMulti, parentName, width } = panelRegistryEntry;
-  return { anchor, isMulti, name, parentName, width } as PanelEntry;
-}
+import { defaultPanelEntry } from "@utils/panelUtils";
 
 const initialState: PanelStore = {
   openPanels: [],
@@ -20,6 +14,23 @@ const initialState: PanelStore = {
   canGoForward: false
 };
 
+function _panelId(request: PanelRequest) {
+  const { id, name } = request;
+  return id ?? name;
+}
+
+function _currentState({ openPanels, panelEntryMap }: PanelStoreState) {
+  return { openPanels: [ ...openPanels ], panelEntryMap: { ...panelEntryMap } };
+}
+
+function _updatePanelEntryMap(state: PanelStore, id: string, updates: Partial<PanelEntry>) {
+  state.panelEntryMap[id] = {
+    ...defaultPanelEntry(id),
+    ...state.panelEntryMap[id] ?? {},
+    ...updates ?? {}
+  };
+}
+
 function _openPanel(state: PanelStore, request: PanelRequest) {
   const { name, overrides = {} } = request;
   const panelRegistryEntry = panelRegistry[name];
@@ -28,36 +39,24 @@ function _openPanel(state: PanelStore, request: PanelRequest) {
   const id = panelRegistryEntry.isMulti ? nanoid() : name;
   
   if (!state.openPanels.includes(id)) {
-    // add current state
-    state.history.push(currentState(state));
+    _addHistory(state);
     state.openPanels.push(id);
-    const panelEntry = state.panelEntryMap[id] ?? {};
-    state.panelEntryMap[id] = {
-      ...extractPanelEntry(id),
-      ...panelEntry,
-      ...overrides,
-      id
-    };
-    state.future = [];
-    state.canGoForward = false;
-    state.canGoBack = true;
+    _updatePanelEntryMap(state, id, overrides);
   }
 }
 
 function _closePanel(state: PanelStore, request: PanelRequest) {
-  const { id, name } = request;
-  const panelId = id ?? name;
-  // add current state
-  state.history.push(currentState(state));
+  const panelId = _panelId(request);
+  _addHistory(state);
   state.openPanels = state.openPanels.filter((p) => p !== panelId);
   delete state.panelEntryMap[panelId];
+}
+
+function _addHistory(state: PanelStore) {
+  state.history.push(_currentState(state));
   state.future = [];
   state.canGoBack = true;
   state.canGoForward = false;
-}
-
-function currentState({ openPanels, panelEntryMap }: PanelStoreState) {
-  return { openPanels: [ ...openPanels ], panelEntryMap: { ...panelEntryMap } };
 }
 
 const panelSlice = createSlice({
@@ -68,7 +67,7 @@ const panelSlice = createSlice({
     closePanel: (state, action: PayloadAction<PanelRequest>) => _closePanel(state, action.payload),
     togglePanel: (state, action: PayloadAction<PanelRequest>) => {
       const { name } = action.payload;
-      const panelEntry = extractPanelEntry(name);
+      const panelEntry = defaultPanelEntry(name);
       if (panelEntry.isMulti) {
         _openPanel(state, action.payload);
       }
@@ -81,33 +80,33 @@ const panelSlice = createSlice({
       }
     },
     updatePanel: (state, action: PayloadAction<PanelRequest>) => {
-      const { id, name, overrides = {} } = action.payload;
-      const panelId = id ?? name;
-      const entry = state.panelEntryMap[panelId];
-      if (entry) {
-        state.history.push(currentState(state));
-        state.future = [];
-        state.panelEntryMap[panelId] = { ...entry, ...overrides };
-      }
+      const { overrides = {}} = action.payload;
+      const panelId = _panelId(action.payload);
+      _updatePanelEntryMap(state, panelId, overrides);
     },
     resetPanels: () => initialState,
     goBack: (state) => {
+      $log.debug('goBack', state.history, state.future);
       if (state.history.length > 1) {
         const current = state.history.pop();
         if (current) {
+          state.openPanels = current.openPanels;
+          state.panelEntryMap = current.panelEntryMap;
           state.future.unshift(current);
         }
       }
       state.canGoBack = state.history.length > 1;
-      state.canGoBack = state.future.length > 1;
+      state.canGoForward = state.future.length > 1;
     },
     goForward: (state) => {
       const next = state.future.shift();
       if (next) {
+        state.openPanels = next.openPanels;
+        state.panelEntryMap = next.panelEntryMap;
         state.history.push(next);
       }
       state.canGoBack = state.history.length > 1;
-      state.canGoBack = state.future.length > 1;
+      state.canGoForward = state.future.length > 1;
     },
   },
 });

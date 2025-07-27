@@ -54,6 +54,8 @@ const PanelShell = ({
   children,
 }: PanelShellProps) => {
 
+  if (!id && name) id = name;
+
   const [exiting, setExiting] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
   const { openPanels, panelEntry, panelEntryMap, isOpenPanel } = usePanel(id);

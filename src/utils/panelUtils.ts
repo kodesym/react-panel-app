@@ -1,4 +1,5 @@
-import type { Anchor } from "@/types/panels";
+import { panelRegistry } from "@/features/panelRegistry";
+import type { Anchor, PanelEntry } from "@/types/panels";
 
 export const SidebarWidth = 50;
 
@@ -13,4 +14,11 @@ export function oppositeSide(anchor: Anchor) {
     case 'bottom': return 'top';
     default: return 'right';
   }
+}
+
+export function defaultPanelEntry(name: string): PanelEntry {
+  const panelRegistryEntry = panelRegistry[name];
+  if (!panelRegistryEntry) return {} as PanelEntry;
+  const { anchor, isMulti, parentName, width } = panelRegistryEntry;
+  return { anchor, isMulti, name, parentName, width } as PanelEntry;
 }
