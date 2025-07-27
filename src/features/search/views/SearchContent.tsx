@@ -7,6 +7,7 @@ interface Props {
 export const SearchContent = ({ filters }: Props) => {
   return (
     <div>
+      <div>{filters.keyword}</div>
       <TextField variant="outlined" color="secondary" />
     </div>
   );

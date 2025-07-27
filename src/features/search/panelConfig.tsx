@@ -12,13 +12,13 @@ export const searchPanels : PanelRegistry = {
     icon: <SearchIcon />,
     menuAnchor: 'left',
     menuPosition: 'middle',
-    children: <LazyPanel loader={() => import('@/modules/search/SearchPanel')} />,
+    children: <LazyPanel loader={() => import('@features/search/SearchPanel')} />,
   },
   [AppPanels.searchResults]: {
     name: AppPanels.searchResults,
     anchor: 'left',
     width: 400,
     parentName: AppPanels.search, // indicates this is a nested panel
-    children: <LazyPanel loader={() => import('@/modules/search/SearchResultPanel')} />,
+    children: <LazyPanel loader={() => import('@features/search/SearchResultPanel')} />,
   },
 };

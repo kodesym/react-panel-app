@@ -71,7 +71,6 @@ const PanelShell = ({
   const axis = isLeftRight(anchor) ? 'x' : 'y';
 
   return <PanelInstanceProvider value={{ panelId: id }}>
-    <StoreProvider store={panelEntry.store?.store}>
       <Root
         data-panel-id={id}
         data-panel-name={panelEntry.name}
@@ -111,7 +110,6 @@ const PanelShell = ({
           parentRef={panelRef as React.RefObject<HTMLElement>}
         />
       </Root>
-    </StoreProvider>
   </PanelInstanceProvider>
 };
 

@@ -1,17 +1,18 @@
 import { useEffect, useState } from 'react';
 import PanelShell from '@components/panels/PanelShell';
 import { AnimatePresence } from 'framer-motion';
-import { useAtom } from 'jotai';
-import { openPanelsAtom, panelEntryMapAtom } from '@/store/panels/atoms';
-import { panelRegistry } from '@/modules/panelRegistry';
+import { panelRegistry } from '@features/panelRegistry';
+import { useSelector } from 'react-redux';
+import { selectOpenPanels, selectPanelEntryMap } from '@/features/panels/panelSlice';
 
 const PanelRenderer = () => {
-  const [openPanels] = useAtom(openPanelsAtom);
-  const [panelEntryMap] = useAtom(panelEntryMapAtom);
+  const openPanels = useSelector(selectOpenPanels);
+  const panelEntryMap = useSelector(selectPanelEntryMap);
   // Maintain a set of mounted panels to avoid unmounting/remounting
   const [mountedPanels, setMountedPanels] = useState<Set<string>>(new Set());
 
   useEffect(() => {
+    $
     setMountedPanels((prev) => new Set([...prev, ...openPanels]));
   }, [openPanels]);
 

@@ -1,5 +1,5 @@
-import { usePanel } from "@/hooks/usePanel";
-import { AppPanels } from "@/modules";
+import { usePanel } from "@hooks/usePanel";
+import { AppPanels } from "@/features";
 import { Button } from "@mui/material";
 
 

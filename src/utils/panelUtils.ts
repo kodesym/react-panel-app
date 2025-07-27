@@ -1,4 +1,3 @@
-import { panelRegistry } from "@/modules/panelRegistry";
 import type { Anchor } from "@/types/panels";
 
 export const SidebarWidth = 50;
@@ -14,8 +13,4 @@ export function oppositeSide(anchor: Anchor) {
     case 'bottom': return 'top';
     default: return 'right';
   }
-}
-
-export function uniquePanelList() {
-  return new Set(...Object.values(panelRegistry).map(p => p.name));
 }

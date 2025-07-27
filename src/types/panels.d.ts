@@ -5,6 +5,12 @@ export type Anchor = 'top' | 'bottom' | 'left' | 'right';
 
 export type MenuPosition = 'start' | 'middle' | 'end';
 
+export interface PanelRequest {
+  id?: string;
+  name: string;
+  overrides?: Partial<PanelEntry>;
+}
+
 export interface PanelModel {
   name: string;
   anchor: Anchor;
@@ -29,7 +35,6 @@ export interface PanelEntry extends PanelModel {
   name: string;
   parentId?: string;
   props?: Record<string, any>;
-  store?: ViewState;
 }
 
 export interface PanelRegistryEntry extends PanelModel, PanelMenuItem {
@@ -45,42 +50,35 @@ export interface PanelStoreState {
   panelEntryMap: PanelEntryMap;
 }
 
-export interface PanelHistoryManager {
-  canGoBack: boolean;
-  canGoForward: boolean;
-  goBack: () => PanelStoreState | null;
-  goForward: () => PanelStoreState | null;
-  // getBreadcrumbs: () => PanelEntry[];
+export interface PanelStoreStateNav {
+  history: PanelStoreState[],
+  future: PanelStoreState[],
+  canGoBack: boolean,
+  canGoForward: boolean,
 }
 
-export interface PanelStore extends PanelStoreState, PanelHistoryManager {
-  openPanel: (name: string, overrides?: Partial<PanelEntry>) => void;
-  closePanel: (id: string) => void;
-  togglePanel: (name: string) => void;
-  updatePanel: (id: string, updates: Partial<PanelEntry>) => void;
-  setOpenPanels: (names: string[]) => void;
-  reset: () => void;
+export interface PanelStore extends PanelStoreState, PanelStoreStateNav {
+
 }
+
+// export interface PanelNavManager {
+//   canGoBack: boolean;
+//   canGoForward: boolean;
+//   goBack: () => PanelStoreState | null;
+//   goForward: () => PanelStoreState | null;
+// }
+
+// export interface PanelStore extends PanelStoreState, PanelStoreStateNav, PanelNavManager {
+//   openPanel: (name: string, overrides?: Partial<PanelEntry>) => void;
+//   closePanel: (id: string) => void;
+//   togglePanel: (name: string) => void;
+//   updatePanel: (id: string, updates: Partial<PanelEntry>) => void;
+//   reset: () => void;
+// }
 
 export interface PanelSectionProps {
   id: string;
   children?: React.ReactNode;
   className?: string;
   sx?: React.CSSProperties;
-}
-
-export interface ViewStateConfig {
-  fields: Record<string, any>,
-  actions?: Record<string, (get: GetterFn, set: SetterFn) => void>,
-}
-
-export interface ViewState {
-  atoms: Record<string, AnyAtom>,
-  store?: AtomScopedStore,
-  get: GetterFn,
-  set: SetterFn
-}
-
-export interface PanelStateConfig {
-  [name: string]: ViewStateConfig
 }

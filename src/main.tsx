@@ -4,6 +4,8 @@ import { CssBaseline, ThemeProvider } from '@mui/material';
 import { ThemeModeProvider, useThemeMode } from '@contexts/ThemeContext';
 import theme from '@styles/theme';
 import App from './App';
+import { Provider } from 'react-redux';
+import { store } from './store/store';
 
 const ThemedApp = () => {
   const { mode } = useThemeMode();
@@ -11,7 +13,9 @@ const ThemedApp = () => {
   return (
     <ThemeProvider theme={muiTheme}>
       <CssBaseline />
-      <App />
+      <Provider store={store}>
+        <App />
+      </Provider>
     </ThemeProvider>
   );
 };

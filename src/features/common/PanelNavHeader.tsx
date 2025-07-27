@@ -1,5 +1,4 @@
 import { usePanel } from "@/hooks/usePanel";
-import { usePanelStore } from "@/hooks/usePanelStore";
 import { IconButton, styled } from "@mui/material";
 import BackIcon from '@mui/icons-material/ArrowBack';
 import ForwardIcon from '@mui/icons-material/ArrowForward';
@@ -16,8 +15,7 @@ const Root = styled('div',{name:'PanelNavHeader'})(({theme}) => ({
 }));
 
 export const PanelNavHeader = () => {
-  const { canGoBack, canGoForward, goBack, goForward } = usePanelStore();
-  const { closePanel } = usePanel();
+  const { closePanel, goBack, goForward, canGoBack, canGoForward } = usePanel();
 
   return (
     <Root>

@@ -5,12 +5,12 @@ import {
   styled,
   type BoxProps
 } from '@mui/material';
-import { panelRegistry } from '@/modules/panelRegistry';
-import { isLeftRight, oppositeSide, SidebarWidth } from '@/utils/panelUtils';
+import { panelRegistry } from '@features/panelRegistry';
+import { isLeftRight, oppositeSide, SidebarWidth } from '@utils/panelUtils';
 import SidebarMenuItem from './SidebarMenuItem';
 import type { Anchor, PanelMenuItem, PanelRegistryEntry } from '@/types/panels';
-import { usePanelStore } from '@/hooks/usePanelStore';
-import { capitalizeFirstLetter, resolveValue } from '@/utils/common';
+import { capitalizeFirstLetter, resolveValue } from '@utils/common';
+import { togglePanel } from '@/features/panels/panelSlice';
 
 interface SidebarProps extends BoxProps {
   anchor: Anchor;
@@ -54,8 +54,6 @@ function getMenuProps(entry: PanelRegistryEntry): PanelMenuItem {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ anchor }) => {
-  const { togglePanel } = usePanelStore();
-
   const menuItems = Object.values(panelRegistry).filter(p => !p.parentName && !resolveValue(p.isHidden) && p.menuAnchor === anchor); 
 
   return (
@@ -66,7 +64,7 @@ const Sidebar: React.FC<SidebarProps> = ({ anchor }) => {
         return <Menus key={position} anchor={anchor}>
           <List disablePadding>
             {menuItems.filter((item) => item.menuPosition === position).map((panel) => (
-              <SidebarMenuItem key={panel.name} {...getMenuProps(panel)} onClick={getMenuProps(panel).onClick ?? (() => togglePanel(panel.name))} />
+              <SidebarMenuItem key={panel.name} {...getMenuProps(panel)} onClick={getMenuProps(panel).onClick ?? (() => togglePanel({name: panel.name}))} />
             ))}
           </List>
         </Menus>
