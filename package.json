@@ -13,6 +13,7 @@
     "@mui/icons-material": "^7.2.0",
     "@mui/material": "^7.2.0",
     "@reduxjs/toolkit": "^2.8.2",
+    "consola": "^3.4.2",
     "framer-motion": "^12.23.0",
     "isbot": "^5.1.27",
     "jotai": "^2.12.5",

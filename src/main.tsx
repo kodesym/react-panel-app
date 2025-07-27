@@ -5,7 +5,8 @@ import { ThemeModeProvider, useThemeMode } from '@contexts/ThemeContext';
 import theme from '@styles/theme';
 import App from './App';
 import { Provider } from 'react-redux';
-import { store } from './store/store';
+import store from './store/store';
+import '@utils/globalLogger';
 
 const ThemedApp = () => {
   const { mode } = useThemeMode();

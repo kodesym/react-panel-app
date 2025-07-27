@@ -2,7 +2,7 @@
 import { useMemo } from 'react';
 import { usePanelInstance } from '@/contexts/PanelInstanceContext';
 import type { PanelEntry } from '@/types/panels';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { 
   openPanel,
   closePanel,
@@ -16,8 +16,10 @@ import {
   selectCanGoBack,
   selectCanGoForward,
 } from '@features/panels/panelSlice';
+import { panelRegistry } from '@/features/panelRegistry';
 
   export const usePanel = (id?: string) => {
+    const dispatch = useDispatch();
     if (!id) {
       const { panelId } = usePanelInstance();
       if (!panelId) {
@@ -31,21 +33,23 @@ import {
     const canGoBack = useSelector(selectCanGoBack);
     const canGoForward = useSelector(selectCanGoForward);
     const isOpenPanel = openPanels.includes(id);
-    const panelEntry = panelEntryMap[id] ?? {};
+    const panelEntry = panelEntryMap[id] ?? panelRegistry[id] ? { ...panelRegistry[id] } : {} as PanelEntry;
     const request = { id, name: panelEntry.name };
+
+    $log.debug('usePanel', id, panelEntry)
 
     return useMemo(
       () => ({
         id,
         name: panelEntry.name,
         isOpenPanel,
-        openPanel: (overrides = {}) => openPanel({ ...request, overrides}),
-        closePanel: () => closePanel(request),
-        togglePanel: () => togglePanel(request),
-        updatePanel: (overrides: Partial<PanelEntry> = {}) => updatePanel({ ...request, overrides }),
-        resetPanels: () => resetPanels(),
-        goBack: () => goBack(),
-        goForward: () => goForward(),
+        openPanel: (overrides = {}) => dispatch(openPanel({ ...request, overrides})),
+        closePanel: () => dispatch(closePanel(request)),
+        togglePanel: () => dispatch(togglePanel(request)),
+        updatePanel: (overrides: Partial<PanelEntry> = {}) => dispatch(updatePanel({ ...request, overrides })),
+        resetPanels: () => dispatch((resetPanels())),
+        goBack: () => dispatch(goBack()),
+        goForward: () => dispatch(goForward()),
         panelEntry,
         openPanels,
         panelEntryMap,

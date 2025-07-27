@@ -6,9 +6,10 @@ import { Button } from "@mui/material";
 export const SearchFooter = () => {
 
   const { closePanel } = usePanel();
-  const { openPanel } = usePanel(AppPanels.searchResults);
+  const { id, openPanel } = usePanel(AppPanels.searchResults);
 
   const handleSearch = () => {
+    $log.debug('openPanel',id);
     openPanel();
   };
 

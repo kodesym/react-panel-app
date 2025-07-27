@@ -1,3 +1,4 @@
+import type { RootState } from "@/store/store";
 import type { PanelEntry, PanelRequest, PanelStoreState, PanelStore } from "@/types/panels";
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { panelRegistry } from "../panelRegistry";
@@ -121,9 +122,9 @@ export const {
   goForward,
 } = panelSlice.actions;
 
-export const selectOpenPanels = (state: PanelStore) => state.openPanels;
-export const selectPanelEntryMap = (state: PanelStore) => state.panelEntryMap;
-export const selectCanGoBack = (state: PanelStore) => state.canGoBack;
-export const selectCanGoForward = (state: PanelStore) => state.canGoForward;
+export const selectOpenPanels = (state: RootState) => state.panels.openPanels;
+export const selectPanelEntryMap = (state: RootState) => state.panels.panelEntryMap;
+export const selectCanGoBack = (state: RootState) => state.panels.canGoBack;
+export const selectCanGoForward = (state: RootState) => state.panels.canGoForward;
 
 export default panelSlice.reducer;

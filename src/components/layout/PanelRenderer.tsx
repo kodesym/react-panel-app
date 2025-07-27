@@ -3,7 +3,7 @@ import PanelShell from '@components/panels/PanelShell';
 import { AnimatePresence } from 'framer-motion';
 import { panelRegistry } from '@features/panelRegistry';
 import { useSelector } from 'react-redux';
-import { selectOpenPanels, selectPanelEntryMap } from '@/features/panels/panelSlice';
+import { selectOpenPanels, selectPanelEntryMap } from '@features/panels/panelSlice';
 
 const PanelRenderer = () => {
   const openPanels = useSelector(selectOpenPanels);
@@ -12,7 +12,6 @@ const PanelRenderer = () => {
   const [mountedPanels, setMountedPanels] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    $
     setMountedPanels((prev) => new Set([...prev, ...openPanels]));
   }, [openPanels]);
 

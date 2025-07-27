@@ -11,6 +11,7 @@ import SidebarMenuItem from './SidebarMenuItem';
 import type { Anchor, PanelMenuItem, PanelRegistryEntry } from '@/types/panels';
 import { capitalizeFirstLetter, resolveValue } from '@utils/common';
 import { togglePanel } from '@/features/panels/panelSlice';
+import { useDispatch } from 'react-redux';
 
 interface SidebarProps extends BoxProps {
   anchor: Anchor;
@@ -55,7 +56,7 @@ function getMenuProps(entry: PanelRegistryEntry): PanelMenuItem {
 
 const Sidebar: React.FC<SidebarProps> = ({ anchor }) => {
   const menuItems = Object.values(panelRegistry).filter(p => !p.parentName && !resolveValue(p.isHidden) && p.menuAnchor === anchor); 
-
+  const dispatch = useDispatch();
   return (
     <Root anchor={anchor}>
 
@@ -63,9 +64,10 @@ const Sidebar: React.FC<SidebarProps> = ({ anchor }) => {
         const Menus = createMenus(position);
         return <Menus key={position} anchor={anchor}>
           <List disablePadding>
-            {menuItems.filter((item) => item.menuPosition === position).map((panel) => (
-              <SidebarMenuItem key={panel.name} {...getMenuProps(panel)} onClick={getMenuProps(panel).onClick ?? (() => togglePanel({name: panel.name}))} />
-            ))}
+            {menuItems.filter((item) => item.menuPosition === position).map((panel) => {
+              const { onClick, ...menuProps } = getMenuProps(panel);
+              return (<SidebarMenuItem key={panel.name} {...menuProps} onClick={onClick ?? (() => dispatch(togglePanel({name: panel.name})))} />)}
+              )}
           </List>
         </Menus>
       })}
