@@ -86,7 +86,6 @@ const panelSlice = createSlice({
     },
     resetPanels: () => initialState,
     goBack: (state) => {
-      $log.debug('goBack', state.history, state.future);
       if (state.history.length > 1) {
         const current = state.history.pop();
         if (current) {

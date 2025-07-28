@@ -9,12 +9,11 @@ export const SearchFooter = () => {
   const { id, openPanel } = usePanel(AppPanels.searchResults);
 
   const handleSearch = () => {
-    $log.debug('openPanel',id);
     openPanel();
   };
 
   return (
-    <div className="text-sm text-gray-400">
+    <div>
       <Button variant="contained" size="small" onClick={handleSearch} color="primary">
         Search
       </Button>

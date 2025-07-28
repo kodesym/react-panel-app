@@ -34,12 +34,13 @@ import { defaultPanelEntry } from '@/utils/panelUtils';
     const canGoForward = useSelector(selectCanGoForward);
     const isOpenPanel = openPanels.includes(id);
     const panelEntry = panelEntryMap[id] ?? defaultPanelEntry(id);
-    const request = { id, name: panelEntry.name };
+    const { name } = panelEntry;
+    const request = { id, name };
 
     return useMemo(
       () => ({
         id,
-        name: panelEntry.name,
+        name,
         isOpenPanel,
         openPanel: (overrides = {}) => dispatch(openPanel({ ...request, overrides})),
         closePanel: () => dispatch(closePanel(request)),

@@ -11,5 +11,3 @@ export const panelRegistry: PanelRegistry = {
   ...searchPanels,
   ...settingsPanels,
 };
-
-export const panelRenderMap = Object.fromEntries(Object.entries(panelRegistry).map(([key, importer]) => [key, React.lazy(importer.children)]));

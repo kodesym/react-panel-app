@@ -4,7 +4,6 @@ import { AnimatePresence } from 'framer-motion';
 import { panelRegistry } from '@features/panelRegistry';
 import { useSelector } from 'react-redux';
 import { selectOpenPanels, selectPanelEntryMap } from '@features/panels/panelSlice';
-import { LazyPanel } from '../panels/LazyPanel';
 
 const PanelRenderer = () => {
   const openPanels = useSelector(selectOpenPanels);
@@ -13,6 +12,7 @@ const PanelRenderer = () => {
   const [mountedPanels, setMountedPanels] = useState<Set<string>>(new Set());
 
   useEffect(() => {
+    $log.debug('openPanels', openPanels);
     setMountedPanels((prev) => new Set([...prev, ...openPanels]));
   }, [openPanels]);
 

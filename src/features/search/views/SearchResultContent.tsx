@@ -9,7 +9,7 @@ interface Props {
 export const SearchResultContent = ({ filters }: Props) => {
   const { closePanel } = usePanel();
   return (
-    <div className="flex gap-2 items-center">
+    <div>
       <div>{filters.keyword}</div>
       <Button variant="outlined" size="small" color="primary" onClick={closePanel}>
         Close
