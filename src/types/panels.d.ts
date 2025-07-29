@@ -1,5 +1,4 @@
-import type { GetterFn, MaybeFunction, SetterFn } from "./common";
-import type { AnyAtom, AtomScopedStore } from './atom';
+import type { MaybeFunction } from "./common";
 
 export type Anchor = 'top' | 'bottom' | 'left' | 'right';
 
